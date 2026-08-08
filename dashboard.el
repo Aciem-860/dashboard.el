@@ -67,12 +67,12 @@
       (insert (propertize "# AUJOURD'HUI\n-------------\n" 'face 'bold))
       (insert (format "%s\n" (format-time-string "%A %d %B %Y%n%R %z (%Z)%nsemaine %U")))
       (insert "\n")
-      
+
       (insert (propertize "# PROPRIÉTÉS\n------------\n" 'face 'bold))
       (insert (format "Utilisateur : %s\n" (string-pad (format " %s" (user-login-name)) 10 ?. t)))
       (insert (format "Machine     : %s\n" (string-pad (format " %s" (system-name)) 10 ?. t)))
       (insert "\n")
-      
+
       ;; RECENT FILES
       (when (not (null recentf-list))
         (insert (propertize "# FICHIERS RÉCENTS\n------------------\n" 'face 'bold))
@@ -89,7 +89,7 @@
         (insert "\n")
         (insert (propertize "# MARQUE-PAGES\n--------------\n" 'face 'bold))
         (print-list-bookmark :offset 4))
-      
+
       ;; HELP
       (insert (propertize "\n# AIDE\n------\n" 'face 'bold))
       (print-list-italic-with-padding '("g : rafraîchir"
@@ -99,10 +99,10 @@
       (insert "\n")
       (insert-button "[ RAFRAÎCHIR ]" 'action #'(lambda (_btn) (refresh-dashboard-buffer)))
       (insert "\n")
-      
+
       ;; Center all lines and then align on left
       (indent-rigidly (point-min) (point-max) 30)
-      
+
       ;; Go to the first element in the first list
       (goto-char (point-min))
       (re-search-forward "\\s-*\\* "))))
@@ -165,7 +165,7 @@
     (define-key map (kbd "q") #'dashboard-quit)
     (define-key map (kbd "x") #'outline-cycle)
     map))
-  
+
 (define-derived-mode dashboard-mode special-mode "Dashboard"
   "Major mode for Dashboard"
   :keymap dashboard-mode-map
