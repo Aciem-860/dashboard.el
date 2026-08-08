@@ -42,16 +42,16 @@
         (bookmarks bookmark-alist))
     (dolist (bookmark bookmarks)
       (let ((bookname (car bookmark))
-            (filename (alist-get 'filename bookmark)))
-
-        (message (format"bookname %s" bookname))
-        (message (format"filename %s" filename))
-
+            (filename (alist-get 'filename bookmark))
+            (position (alist-get 'position bookmark)))
         (insert (make-string offset ?\s))
         (insert "* ")
         (insert-button
          (format "[%s] %s" (string-pad (format "%d" file-idx) 2 ?\s t) bookname)
-         'action #'(lambda (_btn) (find-file filename)))
+         'action #'(lambda (_btn)
+                     (progn
+                       (find-file filename)
+                       (goto-char position))))
         (insert "\n")
         (setq file-idx (1+ file-idx))))))
 
