@@ -36,6 +36,25 @@
     (generate-dashboard-buffer)
     (goto-char pos)))
 
+(defun print-list-bookmark (&rest parameters)
+  (let ((file-idx 1)
+        (offset (or (plist-get parameters :offset) 0))
+        (bookmarks bookmark-alist))
+    (dolist (bookmark bookmarks)
+      (let ((bookname (car bookmark))
+            (filename (alist-get 'filename bookmark)))
+
+        (message (format"bookname %s" bookname))
+        (message (format"filename %s" filename))
+
+        (insert (make-string offset ?\s))
+        (insert "* ")
+        (insert-button
+         (format "[%s] %s" (string-pad (format "%d" file-idx) 2 ?\s t) bookname)
+         'action #'(lambda (_btn) (find-file filename)))
+        (insert "\n")
+        (setq file-idx (1+ file-idx))))))
+
 (defun generate-dashboard-buffer ()
   (interactive)
   (with-current-buffer (get-buffer-create "*dashboard*")
@@ -55,15 +74,22 @@
       (insert "\n")
       
       ;; RECENT FILES
-      (insert (propertize "# FICHIERS RÉCENTS\n------------------\n" 'face 'bold))
-      (list-recent-file-button recentf-list
-                               :offset 4)
+      (when (not (null recentf-list))
+        (insert (propertize "# FICHIERS RÉCENTS\n------------------\n" 'face 'bold))
+        (list-recent-file-button recentf-list
+                                 :offset 4))
       ;; KNOWN PROJECTILE PROJECTS
-      (insert "\n")
-      (insert (propertize "# PROJETS PROJECTILE\n--------------------\n" 'face 'bold))
-      (list-recent-file-button projectile-known-projects
-                               :offset 4)
+      (when (not (null projectile-known-projects))
+        (insert "\n")
+        (insert (propertize "# PROJETS PROJECTILE\n--------------------\n" 'face 'bold))
+        (list-recent-file-button projectile-known-projects
+                                 :offset 4))
 
+      (when (not (null bookmark-alist))
+        (insert "\n")
+        (insert (propertize "# MARQUE-PAGES\n--------------\n" 'face 'bold))
+        (print-list-bookmark :offset 4))
+      
       ;; HELP
       (insert (propertize "\n# AIDE\n------\n" 'face 'bold))
       (print-list-italic-with-padding '("g : rafraîchir"
